@@ -3,10 +3,10 @@ import datetime
 import sys
 from common import *
 
-testing=True
+testing=False
 
 today=todayAsStr()
-baseurl="http://www.seis.sc.edu/dailycensus/"
+baseurl="http://dailycensus.geol.sc.edu/dailycensus/"
 if testing:
     baseurl="http://localhost:8000/dailycensus/"
 
