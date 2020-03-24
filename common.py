@@ -8,6 +8,9 @@ import json
 from urllib.parse import urlparse
 from shutil import copyfile
 import calendar
+import smtplib
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
 
 TELE = "telecommute"
 LEAVE = "leave"
@@ -24,6 +27,8 @@ unitname="SEOE"
 
 totalsTemplate="Daily Count.csv"
 
+fromEmail="test@example.com"
+smtpPassword="abc123"
 
 people = [
     {KEY_NAME:'Philip Crotwell', 'email':'crotwell@seis.sc.edu'},
@@ -119,3 +124,23 @@ def makeCSV(today):
                     row = [unitname, totals[TELE], totals[LEAVE], totals[CAMPUS], totals[UNKNOWN]]
                     writer.writerows([row])
                     break
+
+def sendEmail(person, htmlMessage):
+    msg = MIMEMultipart('alternative')
+    msg['Subject'] = "{} Daily Status".format(unitname)
+    msg['From'] = fromEmail
+    msg['To'] = person['email']
+    htmlpart = MIMEText(htmlMessage, 'html')
+    msg.attach(htmlpart)
+
+# app specific password to bypass 2-factor auth
+    #pw = "frskrrasfzxzzbrl"
+    server=smtplib.SMTP('smtp.gmail.com:587')
+    #server.set_debuglevel(1)
+    server.ehlo()
+    server.starttls()
+    server.ehlo()
+    server.login(fromEmail,smtpPassword)
+
+    server.sendmail(fromEmail, [ person['email'] ], msg.as_string())
+    server.quit()

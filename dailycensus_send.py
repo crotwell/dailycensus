@@ -47,11 +47,12 @@ for u in people:
         tele=makeHash(u[KEY_NAME], today, TELE),
         campus=makeHash(u[KEY_NAME], today, CAMPUS),
         leave=makeHash(u[KEY_NAME], today, LEAVE)))
-    message = htmlMsg.format(name=u[KEY_NAME],
+    htmlMessage = htmlMsg.format(name=u[KEY_NAME],
         todayname=todayName(),
         today=today,
         baseurl=baseurl,
         tele=makeHash(u[KEY_NAME], today, TELE),
         campus=makeHash(u[KEY_NAME], today, CAMPUS),
         leave=makeHash(u[KEY_NAME], today, LEAVE))
-    print(message+"\n\n\n")
+    print(htmlMessage+"\n\n\n")
+    sendEmail(u, htmlMessage)
