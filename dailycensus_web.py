@@ -28,7 +28,7 @@ defaultResponseMsg = """
 
 htmlResponse=defaultResponseMsg
 try:
-    with open('reportsuccess.html', 'r') as f:
+    with open(config['htmlTemplate'], 'r') as f:
         htmlResponse = f.read()
 
 except:

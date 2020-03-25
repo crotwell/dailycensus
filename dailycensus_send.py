@@ -6,7 +6,7 @@ from common import *
 testing=False
 
 today=todayAsStr()
-baseurl="http://dailycensus.geol.sc.edu/dailycensus/"
+baseurl=config['baseurl']
 if testing:
     baseurl="http://localhost:8000/dailycensus/"
 
@@ -30,7 +30,7 @@ defaultMsg="""
 
 htmlMsg=defaultMsg
 try:
-    with open('email_template.html', 'r') as f:
+    with open(config['emailTemplate'], 'r') as f:
         htmlMsg = f.read()
 except:
     print("Unexpected error:", sys.exc_info()[0])
@@ -38,21 +38,14 @@ except:
     #htmlMsg=defaultMsg
 
 print(htmlMsg)
-for u in people:
-    print(u)
-    print("{name} {todayname} {today} {baseurl} {tele} {campus} {leave}".format(name=u[KEY_NAME],
+for person in people:
+    print(person)
+    htmlMessage = htmlMsg.format(name=person[KEY_NAME],
         todayname=todayName(),
         today=today,
         baseurl=baseurl,
-        tele=makeHash(u[KEY_NAME], today, TELE),
-        campus=makeHash(u[KEY_NAME], today, CAMPUS),
-        leave=makeHash(u[KEY_NAME], today, LEAVE)))
-    htmlMessage = htmlMsg.format(name=u[KEY_NAME],
-        todayname=todayName(),
-        today=today,
-        baseurl=baseurl,
-        tele=makeHash(u[KEY_NAME], today, TELE),
-        campus=makeHash(u[KEY_NAME], today, CAMPUS),
-        leave=makeHash(u[KEY_NAME], today, LEAVE))
+        tele=makeHash(person[KEY_NAME], today, TELE),
+        campus=makeHash(person[KEY_NAME], today, CAMPUS),
+        leave=makeHash(person[KEY_NAME], today, LEAVE))
     print(htmlMessage+"\n\n\n")
-    sendEmail(u, htmlMessage)
+    sendEmail(person, config, htmlMessage)

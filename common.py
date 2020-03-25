@@ -2,6 +2,7 @@ import csv
 import datetime
 import hashlib
 import os
+import sys
 import pathlib
 import re
 import json
@@ -22,18 +23,26 @@ STATUS_LIST = [ TELE, LEAVE, CAMPUS, UNKNOWN]
 KEY_NAME= 'name'
 KEY_TODAY='today'
 KEY_STATUS= 'status'
-salt="adfouenlnx"
-unitname="SEOE"
+KEY_EMAIL= 'email'
 
-totalsTemplate="Daily Count.csv"
+configFilename='config_defaults.json'
+configFilename='config_seoe.json'
+config={}
 
-fromEmail="test@example.com"
-smtpPassword="abc123"
+with open(configFilename, 'r') as f:
+    config = json.load(f)
 
-people = [
-    {KEY_NAME:'Philip Crotwell', 'email':'crotwell@seis.sc.edu'},
-    {KEY_NAME:'Helper2', 'email':'helper2@seis.sc.edu'}
-]
+config['people'] = []
+
+def loadPeople(config):
+    with open(config['peopleFile'], 'r', newline='') as peoplefile:
+        reader = csv.reader(peoplefile)
+        for idx in range(config['peopleFileHeaders']):
+            next(reader)
+        for row in reader:
+            config['people'].append({KEY_NAME:row[1], 'email':row[3]})
+    for p in config['people']:
+        print(p)
 
 def statusLong(status):
     if status == TELE:
@@ -55,7 +64,7 @@ def todayName():
     return calendar.day_name[now.weekday()]
 
 def makeHash(name, today, status):
-    asStr = "{name} {today} {status} {salt}".format(name=name, today=today, status=status, salt=salt)
+    asStr = "{name} {today} {status} {salt}".format(name=name, today=today, status=status, salt=config['salt'])
     return hashlib.sha256(asStr.encode('utf-8')).hexdigest()
 
 def matchesHash(hash, name, today, status):
@@ -107,8 +116,8 @@ def makeCSV(today):
     summary = {KEY_TODAY: today, 'totals': totals, 'allResults': allResults}
     with open("{dir}/summary.json".format(dir=dir), 'w') as f:
         f.write(json.dumps(summary))
-    with open(totalsTemplate, 'r', newline='') as templatefile:
-        with open("{}_{}_{}".format(unitname, today, totalsTemplate), 'w', newline='') as outfile:
+    with open(config['totalsTemplate'], 'r', newline='') as templatefile:
+        with open("{}_{}_{}".format(config['unitname'], today, config['totalsTemplate']), 'w', newline='') as outfile:
             writer = csv.writer(outfile)
             reader = csv.reader(templatefile)
             foundHeader = False
@@ -121,14 +130,14 @@ def makeCSV(today):
                     foundHeader = True
                 writer.writerows([row])
                 if foundHeader:
-                    row = [unitname, totals[TELE], totals[LEAVE], totals[CAMPUS], totals[UNKNOWN]]
+                    row = [config['unitname'], totals[TELE], totals[LEAVE], totals[CAMPUS], totals[UNKNOWN]]
                     writer.writerows([row])
                     break
 
-def sendEmail(person, htmlMessage):
+def sendEmail(person, config, htmlMessage):
     msg = MIMEMultipart('alternative')
-    msg['Subject'] = "{} Daily Status".format(unitname)
-    msg['From'] = fromEmail
+    msg['Subject'] = "{} Daily Status for {}".format(config['unitname'], today)
+    msg['From'] = config['fromEmail']
     msg['To'] = person['email']
     htmlpart = MIMEText(htmlMessage, 'html')
     msg.attach(htmlpart)
@@ -140,7 +149,7 @@ def sendEmail(person, htmlMessage):
     server.ehlo()
     server.starttls()
     server.ehlo()
-    server.login(fromEmail,smtpPassword)
+    server.login(config['fromEmail'],smtpPassword)
 
-    server.sendmail(fromEmail, [ person['email'] ], msg.as_string())
+    server.sendmail(config['fromEmail'], [ person['email'] ], msg.as_string())
     server.quit()
