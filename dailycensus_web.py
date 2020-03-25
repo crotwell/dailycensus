@@ -45,7 +45,7 @@ def app(environ, start_response):
     path = environ.get('PATH_INFO', '')
     hash = hashFromUrl(path)
     data=None
-    for u in people:
+    for u in config['people']:
         for s in STATUS_LIST:
             if matchesHash(hash, u[KEY_NAME], today, s):
                 name=u[KEY_NAME]

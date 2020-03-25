@@ -38,7 +38,7 @@ except:
     #htmlMsg=defaultMsg
 
 print(htmlMsg)
-for person in people:
+for person in config['people']:
     print(person)
     htmlMessage = htmlMsg.format(name=person[KEY_NAME],
         todayname=todayName(),

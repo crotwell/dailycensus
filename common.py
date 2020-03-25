@@ -54,11 +54,13 @@ def statusLong(status):
         return "Unknown status of '{}'".format(status)
 
 def todayAsStr():
+    #might be issue if system clock is utc
     now = datetime.datetime.now().replace(microsecond=0)
     today=now.date().isoformat()
     return today
 
 def todayName():
+    #might be issue if system clock is utc
     now = datetime.datetime.now()
     return calendar.day_name[now.weekday()]
 
@@ -110,8 +112,8 @@ def makeCSV(today):
                     jsonstatus = json.load(jsonf)
                     allResults.append(jsonstatus)
                     totals[jsonstatus[KEY_STATUS]] += 1
-    if totals[TELE] +  totals[LEAVE] +  totals[CAMPUS] < len(people):
-        totals[UNKNOWN] = len(people) - (totals[TELE] +  totals[LEAVE] +  totals[CAMPUS])
+    if totals[TELE] +  totals[LEAVE] +  totals[CAMPUS] < len(config['people']):
+        totals[UNKNOWN] = len(config['people']) - (totals[TELE] +  totals[LEAVE] +  totals[CAMPUS])
     summary = {KEY_TODAY: today, 'totals': totals, 'allResults': allResults}
     with open("{dir}/summary.json".format(dir=dir), 'w') as f:
         f.write(json.dumps(summary))
