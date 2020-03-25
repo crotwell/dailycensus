@@ -105,7 +105,7 @@ def makeCSV(today):
     dir = statusDirname(today)
     allResults = []
     totals = {TELE: 0, LEAVE: 0, CAMPUS: 0, UNKNOWN: 0}
-    for dirpath, dnames, fnames in os.walk(config['resultsDir']):
+    for dirpath, dnames, fnames in os.walk(statusDirname(today)):
         for f in fnames:
             if f.endswith(".json") and not f == "summary.json":
                 with open(os.path.join(dirpath, f)) as jsonf:
