@@ -82,7 +82,7 @@ def makeFilesafeString(filename):
 
 def statusDirname(today):
     safeToday = makeFilesafeString(today)
-    dir = "results/{today}".format(today=safeToday)
+    dir = "{resultsDir}/{today}".format(resultsDir=config['resultsDir'], today=safeToday)
     return dir
 
 def statusJsonFilename(name, today):
@@ -105,13 +105,16 @@ def makeCSV(today):
     dir = statusDirname(today)
     allResults = []
     totals = {TELE: 0, LEAVE: 0, CAMPUS: 0, UNKNOWN: 0}
-    for dirpath, dnames, fnames in os.walk("./"):
+    for dirpath, dnames, fnames in os.walk(config['resultsDir']):
         for f in fnames:
             if f.endswith(".json") and not f == "summary.json":
                 with open(os.path.join(dirpath, f)) as jsonf:
                     jsonstatus = json.load(jsonf)
                     allResults.append(jsonstatus)
-                    totals[jsonstatus[KEY_STATUS]] += 1
+                    if KEY_STATUS in jsonstatus:
+                        totals[jsonstatus[KEY_STATUS]] += 1
+                    else:
+                        print("error doing total with {}".format())
     if totals[TELE] +  totals[LEAVE] +  totals[CAMPUS] < len(config['people']):
         totals[UNKNOWN] = len(config['people']) - (totals[TELE] +  totals[LEAVE] +  totals[CAMPUS])
     summary = {KEY_TODAY: today, 'totals': totals, 'allResults': allResults}
