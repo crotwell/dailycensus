@@ -1,0 +1,16 @@
+{
+  "unitname": "TEST",
+  "salt": "blablabla",
+  "fromEmail": "employeestatus@test.sc.edu",
+  "smtpPassword": "changethis_abc123",
+  "smtpHost":"smtp.gmail.com:587",
+  "baseurl": "https://dailycensus.geol.sc.edu/dailycensus/",
+  "htmlTemplate": "reportsuccess.html",
+  "totalsTemplate": "Daily_Count.csv",
+  "emailTemplate": "email_template.html",
+  "peopleFile": "test_people.csv",
+  "peopleFileHeaders": 2,
+  "resultsDir": "results",
+  "resultsEmail": [  "bigboss@test.sc.edu"],
+  "summaryTemplate": "summary_template.txt"
+}
