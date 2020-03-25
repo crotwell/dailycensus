@@ -121,7 +121,7 @@ def makeCSV(today):
         totals[UNKNOWN] = len(config['people']) - (totals[TELE] +  totals[LEAVE] +  totals[CAMPUS])
     summary = {KEY_TODAY: today, 'totals': totals, 'allResults': allResults}
     with open("{dir}/summary.json".format(dir=dir), 'w') as f:
-        f.write(json.dumps(summary))
+        f.write(json.dumps(summary, indent=2))
     with open(config['totalsTemplate'], 'r', newline='') as templatefile:
         with open("{}_{}_{}".format(config['unitname'], today, config['totalsTemplate']), 'w', newline='') as outfile:
             writer = csv.writer(outfile)
