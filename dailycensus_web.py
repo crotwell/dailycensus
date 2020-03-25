@@ -10,6 +10,7 @@ errorHtml="""
     <body>
         <h3>Error Reporting Status</h3>
         <p>We didn't understand that?</p>
+        <p>It is possible you clicked a link from an older email. The links expire each day.</p>
         <h3>{path}</h3>
     </body>
 </html>
