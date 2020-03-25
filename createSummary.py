@@ -4,6 +4,6 @@ from common import *
 
 testing=True
 
-
+loadPeople(config)
 today=todayAsStr()
 makeCSV(today)

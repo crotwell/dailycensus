@@ -37,6 +37,8 @@ except:
     raise
     #htmlMsg=defaultMsg
 
+loadPeople(config)
+
 print(htmlMsg)
 for person in config['people']:
     print(person)
