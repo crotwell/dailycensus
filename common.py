@@ -6,6 +6,7 @@ import sys
 import pathlib
 import re
 import json
+import mimetypes
 from urllib.parse import urlparse
 from shutil import copyfile
 import calendar
@@ -156,4 +157,31 @@ def sendEmail(person, config, htmlMessage):
     server.login(config['fromEmail'],config['smtpPassword'])
 
     server.sendmail(config['fromEmail'], [ person['email'] ], msg.as_string())
+    server.quit()
+
+
+def sendSummary(config, summary):
+    msg = MIMEMultipart()
+    msg['Subject'] = "{} Daily Status for {}".format(config['unitname'], todayAsStr())
+    msg['From'] = config['fromEmail']
+    msg['To'] = config['resultsEmail']
+    msg.['preamble'] = """
+    Summary for {unit} on {today}
+
+    """.format(unit=config['unitname'], today=todayAsStr())
+    csvpart = MIMEText(summary, 'csv')
+    fileToSend="{}_{}_{}".format(config['unitname'], todayAsStr(), config['totalsTemplate'])
+    csvpart.add_header("Content-Disposition", "attachment", filename=fileToSend)
+    msg.attach(csvpart)
+
+# app specific password to bypass 2-factor auth
+    #pw = "frskrrasfzxzzbrl"
+    server=smtplib.SMTP(config['smtpHost'])
+    #server.set_debuglevel(1)
+    server.ehlo()
+    server.starttls()
+    server.ehlo()
+    server.login(config['fromEmail'],config['smtpPassword'])
+
+    server.sendmail(config['fromEmail'], config['resultsEmail'], msg.as_string())
     server.quit()
