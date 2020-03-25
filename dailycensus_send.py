@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 import datetime
 import sys
+from time import sleep
 from common import *
 
 testing=False
@@ -50,3 +51,4 @@ for person in config['people']:
         campus=makeHash(person[KEY_NAME], today, CAMPUS),
         leave=makeHash(person[KEY_NAME], today, LEAVE))
     sendEmail(person, config, htmlMessage)
+    sleep(5)
