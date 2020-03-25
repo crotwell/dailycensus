@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 import datetime
 import sys
+import traceback
 from time import sleep
 from common import *
 
@@ -50,5 +51,11 @@ for person in config['people']:
         tele=makeHash(person[KEY_NAME], today, TELE),
         campus=makeHash(person[KEY_NAME], today, CAMPUS),
         leave=makeHash(person[KEY_NAME], today, LEAVE))
-    sendEmail(person, config, htmlMessage)
-    sleep(5)
+    try:
+        sendEmail(person, config, htmlMessage)
+        sleep(5)
+    except Exception:
+        traceback.print_exc()
+        sleep(10)
+        print("try again..., fail hard if this one crashes too")
+        sendEmail(person, config, htmlMessage)

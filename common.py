@@ -104,6 +104,7 @@ def updateStatus(name, today, status):
 
 def makeCSV(today):
     dir = statusDirname(today)
+    pathlib.Path(dir).mkdir(parents=True, exist_ok=True)
     allResults = []
     totals = {TELE: 0, LEAVE: 0, CAMPUS: 0, UNKNOWN: 0}
     for dirpath, dnames, fnames in os.walk(statusDirname(today)):
@@ -161,14 +162,17 @@ def sendEmail(person, config, htmlMessage):
 
 
 def sendSummary(config, summary):
+    summMsg = """
+    Summary for {unit} on {today}
+
+    """
+    with open(config['summaryTemplate'], 'r') as f:
+        summMsg = f.read()
     msg = MIMEMultipart()
     msg['Subject'] = "{} Daily Status Report for {}".format(config['unitname'], todayAsStr())
     msg['From'] = config['fromEmail']
     msg['To'] = ",".join(config['resultsEmail'])
-    msg['preamble'] = """
-    Summary for {unit} on {today}
-
-    """.format(unit=config['unitname'], today=todayAsStr())
+    msg.attach(MIMEText(summMsg.format(unit=config['unitname'], today=todayAsStr())))
     csvpart = MIMEText(summary, 'csv')
     fileToSend="{}_{}_{}".format(config['unitname'], todayAsStr(), config['totalsTemplate'])
     csvpart.add_header("Content-Disposition", "attachment", filename=fileToSend)

@@ -1,0 +1,25 @@
+
+Please find attached the required Employee Status Report for {today} for the School of Earth, Ocean, and Environment including the Baruch Institute.
+
+The file is in CSV format and should be importable by any common software.
+
+You’ll note that in addition to the 3 sums that you requested, we added a 4th value for the number of employees not reporting.
+
+Also note that our instructions to employees had these choices:
+
+===
+I will work from home today
+
+I will be taking some type of leave today for at least part of the day
+
+I will be going to campus for some critical need for at least part of the day
+===
+
+This explicitly allows for the reality that leave is not always taken for a full day and that people do not go to campus for a full day.
+
+thanks,
+tom owens & jay pinkney
+
+**************
+Please be sure that employeestatus@seoe.sc.edu is a trusted sender by your email client.
+***************
