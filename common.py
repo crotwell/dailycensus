@@ -25,8 +25,7 @@ KEY_TODAY='today'
 KEY_STATUS= 'status'
 KEY_EMAIL= 'email'
 
-configFilename='config_defaults.json'
-configFilename='config_seoe.json'
+configFilename='config.json'
 config={}
 
 with open(configFilename, 'r') as f:
