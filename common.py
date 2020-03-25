@@ -137,7 +137,7 @@ def makeCSV(today):
 
 def sendEmail(person, config, htmlMessage):
     msg = MIMEMultipart('alternative')
-    msg['Subject'] = "{} Daily Status for {}".format(config['unitname'], today)
+    msg['Subject'] = "{} Daily Status for {}".format(config['unitname'], todayAsStr())
     msg['From'] = config['fromEmail']
     msg['To'] = person['email']
     htmlpart = MIMEText(htmlMessage, 'html')
