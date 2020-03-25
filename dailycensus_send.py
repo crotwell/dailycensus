@@ -47,5 +47,4 @@ for person in people:
         tele=makeHash(person[KEY_NAME], today, TELE),
         campus=makeHash(person[KEY_NAME], today, CAMPUS),
         leave=makeHash(person[KEY_NAME], today, LEAVE))
-    print(htmlMessage+"\n\n\n")
     sendEmail(person, config, htmlMessage)
