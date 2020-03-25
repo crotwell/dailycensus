@@ -165,7 +165,7 @@ def sendSummary(config, summary):
     msg['Subject'] = "{} Daily Status for {}".format(config['unitname'], todayAsStr())
     msg['From'] = config['fromEmail']
     msg['To'] = config['resultsEmail']
-    msg.['preamble'] = """
+    msg['preamble'] = """
     Summary for {unit} on {today}
 
     """.format(unit=config['unitname'], today=todayAsStr())
