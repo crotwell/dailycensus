@@ -162,9 +162,9 @@ def sendEmail(person, config, htmlMessage):
 
 def sendSummary(config, summary):
     msg = MIMEMultipart()
-    msg['Subject'] = "{} Daily Status for {}".format(config['unitname'], todayAsStr())
+    msg['Subject'] = "{} Daily Status Report for {}".format(config['unitname'], todayAsStr())
     msg['From'] = config['fromEmail']
-    msg['To'] = config['resultsEmail']
+    msg['To'] = ",".join(config['resultsEmail'])
     msg['preamble'] = """
     Summary for {unit} on {today}
 
