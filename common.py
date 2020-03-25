@@ -145,12 +145,12 @@ def sendEmail(person, config, htmlMessage):
 
 # app specific password to bypass 2-factor auth
     #pw = "frskrrasfzxzzbrl"
-    server=smtplib.SMTP('smtp.gmail.com:587')
+    server=smtplib.SMTP(config['smtpHost'])
     #server.set_debuglevel(1)
     server.ehlo()
     server.starttls()
     server.ehlo()
-    server.login(config['fromEmail'],smtpPassword)
+    server.login(config['fromEmail'],config['smtpPassword'])
 
     server.sendmail(config['fromEmail'], [ person['email'] ], msg.as_string())
     server.quit()
