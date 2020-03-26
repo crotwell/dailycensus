@@ -10,6 +10,8 @@
   "emailTemplate": "email_template.html",
   "peopleFile": "test_people.csv",
   "peopleFileHeaders": 2,
+  "peopleFileNameCol": 1,
+  "peopleFileEmailCol": 0,
   "resultsDir": "results",
   "resultsEmail": [  "bigboss@test.sc.edu"],
   "summaryTemplate": "summary_template.txt"

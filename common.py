@@ -35,12 +35,17 @@ with open(configFilename, 'r') as f:
 config['people'] = []
 
 def loadPeople(config):
-    with open(config['peopleFile'], 'r', newline='') as peoplefile:
-        reader = csv.reader(peoplefile)
-        for idx in range(config['peopleFileHeaders']):
-            next(reader)
-        for row in reader:
-            config['people'].append({KEY_NAME:row[1], 'email':row[3]})
+    if config['peopleFile'].endswith('.csv'):
+        nameCol = config['peopleFileNameCol']
+        emailCol = config['peopleFileEmailCol']
+        with open(config['peopleFile'], 'r', newline='') as peoplefile:
+            reader = csv.reader(peoplefile)
+            for idx in range(config['peopleFileHeaders']):
+                next(reader)
+            for row in reader:
+                config['people'].append({KEY_NAME:row[nameCol], 'email':row[emailCol]})
+    elif config['peopleFile'].endswith('.json'):
+        config['people'] = json.load(config['peopleFile'])
     for p in config['people']:
         print(p)
 
