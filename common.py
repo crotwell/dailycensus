@@ -46,8 +46,6 @@ def loadPeople(config):
                 config['people'].append({KEY_NAME:row[nameCol], 'email':row[emailCol]})
     elif config['peopleFile'].endswith('.json'):
         config['people'] = json.load(config['peopleFile'])
-    for p in config['people']:
-        print(p)
 
 def statusLong(status):
     if status == TELE:
@@ -144,6 +142,7 @@ def makeCSV(today):
                     row = [config['unitname'], totals[TELE], totals[LEAVE], totals[CAMPUS], totals[UNKNOWN]]
                     writer.writerows([row])
                     break
+    return summary
 
 def sendEmail(person, config, htmlMessage):
     msg = MIMEMultipart('alternative')

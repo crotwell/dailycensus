@@ -41,6 +41,7 @@ except:
 
 loadPeople(config)
 
+num_sent=0
 print(htmlMsg)
 for person in config['people']:
     print(person)
@@ -53,9 +54,11 @@ for person in config['people']:
         leave=makeHash(person[KEY_NAME], today, LEAVE))
     try:
         sendEmail(person, config, htmlMessage)
+        num_sent += 1
         sleep(5)
     except Exception:
         traceback.print_exc()
         sleep(10)
         print("try again..., fail hard if this one crashes too")
         sendEmail(person, config, htmlMessage)
+print("{} sent {} out of {}".format(today, num_sent, len(config['people'])))
