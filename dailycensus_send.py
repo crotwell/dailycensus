@@ -40,10 +40,21 @@ except:
     #htmlMsg=defaultMsg
 
 loadPeople(config)
+fixedStatus = loadFixedStatus(config)
 
 num_sent=0
 print(htmlMsg)
 for person in config['people']:
+    found = False
+    for f in fixedStatus:
+        if person[KEY_NAME] == f[KEY_NAME]:
+            # fixed status, skip email
+            found = True
+            break
+    if found:
+        # fixed status, skip email
+        break
+
     print(person)
     htmlMessage = htmlMsg.format(name=person[KEY_NAME],
         todayname=todayName(),
