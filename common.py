@@ -25,6 +25,7 @@ KEY_NAME= 'name'
 KEY_TODAY='today'
 KEY_STATUS= 'status'
 KEY_EMAIL= 'email'
+KEY_FIXED = 'fixed'
 
 configFilename='config.json'
 config={}
@@ -46,6 +47,10 @@ def loadPeople(config):
                 config['people'].append({KEY_NAME:row[nameCol], 'email':row[emailCol]})
     elif config['peopleFile'].endswith('.json'):
         config['people'] = json.load(config['peopleFile'])
+
+def loadFixedStatus(config):
+    with open(config['fixedStatusFile']) as f:
+        return json.load(f)
 
 def statusLong(status):
     if status == TELE:
@@ -110,6 +115,7 @@ def makeCSV(today):
     pathlib.Path(dir).mkdir(parents=True, exist_ok=True)
     allResults = []
     totals = {TELE: 0, LEAVE: 0, CAMPUS: 0, UNKNOWN: 0}
+    fixedStatus = loadFixedStatus(config)
     for dirpath, dnames, fnames in os.walk(statusDirname(today)):
         for f in fnames:
             if f.endswith(".json") and not f == "summary.json":
@@ -119,7 +125,23 @@ def makeCSV(today):
                     if KEY_STATUS in jsonstatus:
                         totals[jsonstatus[KEY_STATUS]] += 1
                     else:
-                        print("error doing total with {}".format())
+                        print("error doing total with {}".format(jsonstatus))
+
+    for jsonstatus in fixedStatus:
+        jsonstatus[KEY_TODAY] = today
+        jsonstatus[KEY_FIXED] = True
+        found = False
+        for r in allResults:
+            if jsonstatus[KEY_NAME] == r[KEY_NAME]:
+                # reported so don't overwrite
+                found = True
+                break
+        if not found:
+            allResults.append(jsonstatus)
+            if KEY_STATUS in jsonstatus:
+                totals[jsonstatus[KEY_STATUS]] += 1
+            else:
+                print("error fixed status for {}".format(jsonstatus))
     if totals[TELE] +  totals[LEAVE] +  totals[CAMPUS] < len(config['people']):
         totals[UNKNOWN] = len(config['people']) - (totals[TELE] +  totals[LEAVE] +  totals[CAMPUS])
 

@@ -12,6 +12,7 @@
   "peopleFileHeaders": 2,
   "peopleFileNameCol": 1,
   "peopleFileEmailCol": 0,
+  "fixedStatusFile": "fixed_status.json",
   "resultsDir": "results",
   "resultsEmail": [  "bigboss@test.sc.edu"],
   "summaryTemplate": "summary_template.txt"
