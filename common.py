@@ -114,7 +114,7 @@ def makeCSV(today):
     dir = statusDirname(today)
     pathlib.Path(dir).mkdir(parents=True, exist_ok=True)
     allResults = []
-    totals = {TELE: 0, LEAVE: 0, CAMPUS: 0, UNKNOWN: 0}
+    totals = {TELE: 0, LEAVE: 0, CAMPUS: 0, UNKNOWN: 0, ALL: len(config['people'])}
     fixedStatus = loadFixedStatus(config)
     for dirpath, dnames, fnames in os.walk(statusDirname(today)):
         for f in fnames:
@@ -155,7 +155,7 @@ def makeCSV(today):
         if not found:
             didNotReport.append(p)
 
-    summary = {KEY_TODAY: today, 'totals': totals, 'allResults': allResults, 'notReporting': didNotReport}
+    summary = {KEY_TODAY: today, 'totals': totals, 'allResults': allResults, 'notReporting': didNotReport, 'fixedStatus': fixedStatus}
     with open("{dir}/summary.json".format(dir=dir), 'w') as f:
         f.write(json.dumps(summary, indent=2))
     with open(config['totalsTemplate'], 'r', newline='') as templatefile:
