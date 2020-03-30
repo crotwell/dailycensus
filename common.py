@@ -18,6 +18,7 @@ TELE = "telecommute"
 LEAVE = "leave"
 CAMPUS = "campus"
 UNKNOWN="unknown"
+ALL="all"
 
 STATUS_LIST = [ TELE, LEAVE, CAMPUS, UNKNOWN]
 
