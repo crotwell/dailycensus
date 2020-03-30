@@ -122,7 +122,18 @@ def makeCSV(today):
                         print("error doing total with {}".format())
     if totals[TELE] +  totals[LEAVE] +  totals[CAMPUS] < len(config['people']):
         totals[UNKNOWN] = len(config['people']) - (totals[TELE] +  totals[LEAVE] +  totals[CAMPUS])
-    summary = {KEY_TODAY: today, 'totals': totals, 'allResults': allResults}
+
+    didNotReport = []
+    for p in config['people']:
+        found = False
+        for r in allResults:
+            if r[KEY_NAME] == p[KEY_NAME]:
+                found = True
+                break
+        if not found:
+            didNotReport.append(p)
+
+    summary = {KEY_TODAY: today, 'totals': totals, 'allResults': allResults, 'notReporting': didNotReport}
     with open("{dir}/summary.json".format(dir=dir), 'w') as f:
         f.write(json.dumps(summary, indent=2))
     with open(config['totalsTemplate'], 'r', newline='') as templatefile:
