@@ -53,7 +53,7 @@ for person in config['people']:
             break
     if found:
         # fixed status, skip email
-        break
+        continue
 
     print(person)
     htmlMessage = htmlMsg.format(name=person[KEY_NAME],
