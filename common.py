@@ -149,7 +149,7 @@ def makeCSV(today):
             else:
                 print("error fixed status for {}".format(jsonstatus))
     totals[ALL] = totalNum
-    
+
     if totals[TELE] +  totals[LEAVE] +  totals[COVID] +  totals[CAMPUS] < totalNum:
         totals[UNKNOWN] = totalNum - (totals[TELE] +  totals[LEAVE]  +  totals[COVID] +  totals[CAMPUS])
 
@@ -187,8 +187,8 @@ def makeCSV(today):
                     foundHeader = True
                 writer.writerows([row])
                 if foundHeader:
-                    row = [config['unitname'], totals[TELE], totals[LEAVE], totals[COVID], totals[CAMPUS], totals[UNKNOWN]]
-                    writer.writerows([row])
+                    row = [config['unitname'], totals[TELE], totals[LEAVE], totals[CAMPUS], totals[UNKNOWN]]
+                    writer.writerows([row, ["", 'COVID', totals[COVID]]])
                     break
     return summary
 
