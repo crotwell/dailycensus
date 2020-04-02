@@ -15,6 +15,6 @@
   "fixedStatusFile": "fixed_status.json",
   "resultsDir": "results",
   "resultsEmail": [  "bigboss@test.sc.edu"],
-  "resultsUrl": [  "http://localhost:8000/dopost"],
+  "resultsUrl":  "http://localhost:8000/dopost",
   "summaryTemplate": "summary_template.txt"
 }
