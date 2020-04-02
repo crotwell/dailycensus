@@ -51,7 +51,7 @@ values = {
    }
 
 #url = "https://universityofsouthcarolina-yrckc.formstack.com/forms/index.php"
-url = "http://localhost:8000/dopost"
+url = config['resultsUrl']
 r = requests.post(url, data=values)
 with open('postformresult.html', 'w') as f:
     f.write("Status Code: {}".format(r.status_code))
