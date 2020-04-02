@@ -62,6 +62,7 @@ for person in config['people']:
         baseurl=baseurl,
         tele=makeHash(person[KEY_NAME], today, TELE),
         campus=makeHash(person[KEY_NAME], today, CAMPUS),
+        covid=makeHash(person[KEY_NAME], today, COVID),
         leave=makeHash(person[KEY_NAME], today, LEAVE))
     try:
         sendEmail(person, config, htmlMessage)

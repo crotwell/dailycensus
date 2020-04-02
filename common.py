@@ -16,11 +16,12 @@ from email.mime.text import MIMEText
 
 TELE = "telecommute"
 LEAVE = "leave"
+COVID = "covidleave"
 CAMPUS = "campus"
 UNKNOWN="unknown"
 ALL="all"
 
-STATUS_LIST = [ TELE, LEAVE, CAMPUS, UNKNOWN]
+STATUS_LIST = [ TELE, LEAVE, COVID, CAMPUS, UNKNOWN]
 
 KEY_NAME= 'name'
 KEY_TODAY='today'
@@ -58,6 +59,8 @@ def statusLong(status):
         return "working from home"
     elif status == LEAVE:
         return "taking some leave"
+    elif status == COVID:
+        return "taking some leave due to COVID-19"
     elif status == CAMPUS:
         return "dropping by campus"
     else:
@@ -115,7 +118,7 @@ def makeCSV(today):
     dir = statusDirname(today)
     pathlib.Path(dir).mkdir(parents=True, exist_ok=True)
     allResults = []
-    totals = {TELE: 0, LEAVE: 0, CAMPUS: 0, UNKNOWN: 0, ALL: len(config['people'])}
+    totals = {TELE: 0, LEAVE: 0, COVID: 0, CAMPUS: 0, UNKNOWN: 0, ALL: len(config['people'])}
     fixedStatus = loadFixedStatus(config)
     for dirpath, dnames, fnames in os.walk(statusDirname(today)):
         for f in fnames:
@@ -143,8 +146,8 @@ def makeCSV(today):
                 totals[jsonstatus[KEY_STATUS]] += 1
             else:
                 print("error fixed status for {}".format(jsonstatus))
-    if totals[TELE] +  totals[LEAVE] +  totals[CAMPUS] < len(config['people']):
-        totals[UNKNOWN] = len(config['people']) - (totals[TELE] +  totals[LEAVE] +  totals[CAMPUS])
+    if totals[TELE] +  totals[LEAVE] +  totals[COVID] +  totals[CAMPUS] < len(config['people']):
+        totals[UNKNOWN] = len(config['people']) - (totals[TELE] +  totals[LEAVE]  +  totals[COVID] +  totals[CAMPUS])
 
     didNotReport = []
     for p in config['people']:
@@ -173,7 +176,7 @@ def makeCSV(today):
                     foundHeader = True
                 writer.writerows([row])
                 if foundHeader:
-                    row = [config['unitname'], totals[TELE], totals[LEAVE], totals[CAMPUS], totals[UNKNOWN]]
+                    row = [config['unitname'], totals[TELE], totals[LEAVE], totals[COVID], totals[CAMPUS], totals[UNKNOWN]]
                     writer.writerows([row])
                     break
     return summary
