@@ -28,6 +28,7 @@ KEY_TODAY='today'
 KEY_STATUS= 'status'
 KEY_EMAIL= 'email'
 KEY_FIXED = 'fixed'
+KEY_TOTALS = 'totals'
 
 configFilename='config.json'
 config={}
@@ -130,7 +131,7 @@ def makeCSV(today):
                         totals[jsonstatus[KEY_STATUS]] += 1
                     else:
                         print("error doing total with {}".format(jsonstatus))
-
+    totalNum = len(config['people'])
     for jsonstatus in fixedStatus:
         jsonstatus[KEY_TODAY] = today
         jsonstatus[KEY_FIXED] = True
@@ -142,12 +143,15 @@ def makeCSV(today):
                 break
         if not found:
             allResults.append(jsonstatus)
+            totalNum += 1
             if KEY_STATUS in jsonstatus:
                 totals[jsonstatus[KEY_STATUS]] += 1
             else:
                 print("error fixed status for {}".format(jsonstatus))
-    if totals[TELE] +  totals[LEAVE] +  totals[COVID] +  totals[CAMPUS] < len(config['people']):
-        totals[UNKNOWN] = len(config['people']) - (totals[TELE] +  totals[LEAVE]  +  totals[COVID] +  totals[CAMPUS])
+    totals[ALL] = totalNum
+    
+    if totals[TELE] +  totals[LEAVE] +  totals[COVID] +  totals[CAMPUS] < totalNum:
+        totals[UNKNOWN] = totalNum - (totals[TELE] +  totals[LEAVE]  +  totals[COVID] +  totals[CAMPUS])
 
     didNotReport = []
     for p in config['people']:
@@ -159,7 +163,14 @@ def makeCSV(today):
         if not found:
             didNotReport.append(p)
 
-    summary = {KEY_TODAY: today, 'totals': totals, 'allResults': allResults, 'notReporting': didNotReport, 'fixedStatus': fixedStatus}
+
+    onCampusNames = []
+    for p in allResults:
+        if p[KEY_STATUS] == CAMPUS:
+            onCampusNames.append(p[KEY_NAME])
+
+
+    summary = {KEY_TODAY: today, KEY_TOTALS: totals, 'onCampusNames': onCampusNames, 'allResults': allResults, 'notReporting': didNotReport, 'fixedStatus': fixedStatus}
     with open("{dir}/summary.json".format(dir=dir), 'w') as f:
         f.write(json.dumps(summary, indent=2))
     with open(config['totalsTemplate'], 'r', newline='') as templatefile:
