@@ -2,13 +2,14 @@
 import datetime
 import sys
 from common import *
+import traceback
 
 testing=True
 
 errorHtml="""
 <html>
     <body>
-        <h3>Error Reporting Status</h3>
+        <h3>Error Reporting Status {today}</h3>
         <p>We didn't understand that?</p>
         <p>It is possible you clicked a link from an older email. The links expire each day.</p>
         <h3>{path}</h3>
@@ -38,26 +39,31 @@ except:
     #htmlResponse=defaultResponseMsg
 
 def app(environ, start_response):
-    if environ['PATH_INFO'].endswith('postformresult.html'):
-        with open('postformresult.html', 'r') as f:
-            postresponse = f.read()
-            postresponse = postresponse.encode('utf-8')
-            start_response("200 OK", [
+    try:
+        if environ['PATH_INFO'].endswith('postformresult.html'):
+            with open('postformresult.html', 'r') as f:
+                postresponse = f.read()
+                postresponse = postresponse.encode('utf-8')
+                start_response("200 OK", [
+                    ("Content-Type", "text/html"),
+                    ("Content-Length", str(len(postresponse)))
+                ])
+                return iter([postresponse])
+        elif environ['PATH_INFO'].endswith('favicon.ico'):
+            data = "nope"
+            print("flavicon: "+data)
+            data = data.encode('utf-8')
+            start_response("404", [
                 ("Content-Type", "text/html"),
-                ("Content-Length", str(len(postresponse)))
+                ("Content-Length", str(len(data)))
             ])
-            return iter([postresponse])
-    elif environ['PATH_INFO'].endswith('favicon.ico'):
-        data = "nope"
-        print(data)
-        data = data.encode('utf-8')
-        start_response("404", [
-            ("Content-Type", "text/html"),
-            ("Content-Length", str(len(data)))
-        ])
-        return iter([data])
-    else:
-        doSubmitOk(environ, start_response)
+            return iter([data])
+        else:
+            return doSubmitOk(environ, start_response)
+    except:
+        tb = traceback.format_exc()
+        print(tb)
+        raise
 
 def doSubmitOk(environ, start_response):
     name="Jane Doe"
@@ -68,6 +74,8 @@ def doSubmitOk(environ, start_response):
     hash = hashFromUrl(path)
     data=None
     loadPeople(config)
+    for s in STATUS_LIST:
+        print(s)
     for u in config['people']:
         for s in STATUS_LIST:
             if matchesHash(hash, u[KEY_NAME], today, s):
@@ -92,6 +100,7 @@ def doSubmitOk(environ, start_response):
         return iter([data])
     else:
         data = errorHtml.format(path=path,today=today)
+        print(data)
         data = data.encode('utf-8')
         start_response("404", [
             ("Content-Type", "text/html"),
