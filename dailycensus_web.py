@@ -38,6 +38,28 @@ except:
     #htmlResponse=defaultResponseMsg
 
 def app(environ, start_response):
+    if environ['PATH_INFO'].endswith('postformresult.html'):
+        with open('postformresult.html', 'r') as f:
+            postresponse = f.read()
+            postresponse = postresponse.encode('utf-8')
+            start_response("200 OK", [
+                ("Content-Type", "text/html"),
+                ("Content-Length", str(len(postresponse)))
+            ])
+            return iter([postresponse])
+    elif environ['PATH_INFO'].endswith('favicon.ico'):
+        data = "nope"
+        print(data)
+        data = data.encode('utf-8')
+        start_response("404", [
+            ("Content-Type", "text/html"),
+            ("Content-Length", str(len(data)))
+        ])
+        return iter([data])
+    else:
+        doSubmitOk(environ, start_response)
+
+def doSubmitOk(environ, start_response):
     name="Jane Doe"
     now = datetime.datetime.now().replace(microsecond=0)
     today=now.date().isoformat()
@@ -69,7 +91,8 @@ def app(environ, start_response):
         ])
         return iter([data])
     else:
-        data = errorHtml.format(path=path,today=today).encode('utf-8')
+        data = errorHtml.format(path=path,today=today)
+        data = data.encode('utf-8')
         start_response("404", [
             ("Content-Type", "text/html"),
             ("Content-Length", str(len(data)))
