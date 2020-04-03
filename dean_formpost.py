@@ -20,14 +20,14 @@ with open("{}_{}_{}".format(config['unitname'], today, config['totalsTemplate'])
 # https://universityofsouthcarolina-yrckc.formstack.com/forms/index.php
 # \" class=\"fsForm fsSingleColumn\" id=\"fsForm3811012\">"
 values = {
-    "form": "1455656",
+    "form": "3811012",
     "viewkey": "0WEgw7kmLG",
     "_submit": "1",
     "password": "",
     "hidden_fields": "",
     "incomplete": "",
     "incomplete_password": "",
-    "referrer": "",
+    "referrer": "https://www.sc.edu/study/colleges_schools/artsandsciences/internal/for_faculty_staff/offices_depts/human_resources/covid19-census.php",
     "referrer_type": "js",
     "style_version": "3",
     "viewparam": "576689",
@@ -44,8 +44,8 @@ values = {
     "field90080449D": "{}".format(now.day), # day 01
     "field90080449Y": "2020", # year
     "field90080322": "{}".format(jsonSummary[KEY_TOTALS][TELE]), # Telecommuting Employees
-    "field90080319": "{}".format(jsonSummary[KEY_TOTALS][LEAVE]), # Employees on Leave
-    "fieldCOVID": "{}".format(jsonSummary[KEY_TOTALS][COVID]), # Employees on Leave
+    "field90588767": "{}".format(jsonSummary[KEY_TOTALS][LEAVE]), # Employees on Leave
+    "field90080319": "{}".format(jsonSummary[KEY_TOTALS][COVID]), # Employees on covid Leave
     "field90080317": "{}".format(jsonSummary[KEY_TOTALS][CAMPUS]), # Employees Working On Campus
     "field90388556": "\n".join(jsonSummary['onCampusNames']), # Employee Names and Titles (Working on Campus)
    }
