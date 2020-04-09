@@ -34,10 +34,10 @@ values = {
     "field90079357": "Earth, Ocean and Environment, School of", # Academic Unit
     "field90079358" : "", # Other Academic Unit
     "field90079822" : "Thomas J. Owens",  # Unit Contact
-    "field90079359-first" : "", # Other Unit Contact Name  First Name
-    "field90079359-last" : "", # Other Unit Contact Name  Last Name
+    "field90079359-first" : "Jae", # Other Unit Contact Name  First Name
+    "field90079359-last" : "Choe", # Other Unit Contact Name  Last Name
     "field90081290" : "owens@seis.sc.edu",  # Contact Email
-    "field90079360" : "", # Other Email
+    "field90079360" : "jchoe@geol.sc.edu ", # Other Email
     "field90083377": "Chair or Director", # Classification
     "field90080449Format": "MDY", # date-format
     "field90080449M": calendar.month_abbr[now.month], # month, Apr
@@ -57,6 +57,25 @@ with open('postformresult.html', 'w') as f:
     f.write("Status Code: {}".format(r.status_code))
     f.write(r.content.decode('ascii'))
 
+# send output of form submit
+msg = MIMEMultipart('alternative')
+msg['Subject'] = "{} Daily Status Posting Result {}".format(config['unitname'], todayAsStr())
+msg['From'] = config['fromEmail']
+msg['To'] = ",".join(config['resultsEmail'])
+htmlpart = MIMEText(r.content.decode('ascii'), 'html')
+msg.attach(htmlpart)
+
+# app specific password to bypass 2-factor auth
+#pw = "frskrrasfzxzzbrl"
+server=smtplib.SMTP(config['smtpHost'])
+#server.set_debuglevel(1)
+server.ehlo()
+server.starttls()
+server.ehlo()
+server.login(config['fromEmail'],config['smtpPassword'])
+
+server.sendmail(config['fromEmail'], config['resultsEmail'], msg.as_string())
+server.quit()
 
 
 print("{} summary:  {}, out of {}".format(today, jsonSummary['totals'], len(config['people'])))
