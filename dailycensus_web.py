@@ -70,6 +70,7 @@ def doSubmitOk(environ, start_response):
     now = datetime.datetime.now().replace(microsecond=0)
     today=now.date().isoformat()
     status=UNKNOWN
+    screeningReminder=""
     path = environ.get('PATH_INFO', '')
     hash = hashFromUrl(path)
     data=None
@@ -82,10 +83,13 @@ def doSubmitOk(environ, start_response):
                 name=u[KEY_NAME]
                 status=s
                 updateStatus(name, today, status)
+                if status == CAMPUS:
+                    screeningReminder=config['screeningReminder']
                 data = htmlResponse.format(name=name,
                     today=today,
                     status=status,
-                    statuslong=statusLong(status)).encode('utf-8')
+                    statuslong=statusLong(status),
+                    screeningReminder=screeningReminder).encode('utf-8')
                 break
         else:
             # Continue if the inner loop wasn't broken.
