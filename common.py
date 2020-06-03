@@ -13,6 +13,8 @@ import calendar
 import smtplib
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
+from email.message import EmailMessage
+from email.headerregistry import Address
 
 TELE = "telecommute"
 LEAVE = "leave"
@@ -24,6 +26,7 @@ ALL="all"
 STATUS_LIST = [ TELE, LEAVE, COVID, CAMPUS, UNKNOWN]
 
 KEY_NAME= 'name'
+KEY_LOC= 'loc'
 KEY_TODAY='today'
 KEY_STATUS= 'status'
 KEY_EMAIL= 'email'
@@ -42,12 +45,13 @@ def loadPeople(config):
     if config['peopleFile'].endswith('.csv'):
         nameCol = config['peopleFileNameCol']
         emailCol = config['peopleFileEmailCol']
+        locCol = config['peopleFileLocCol']
         with open(config['peopleFile'], 'r', newline='') as peoplefile:
             reader = csv.reader(peoplefile)
             for idx in range(config['peopleFileHeaders']):
                 next(reader)
             for row in reader:
-                config['people'].append({KEY_NAME:row[nameCol], 'email':row[emailCol]})
+                config['people'].append({KEY_NAME:row[nameCol], 'email':row[emailCol], KEY_LOC:row[locCol]})
     elif config['peopleFile'].endswith('.json'):
         config['people'] = json.load(config['peopleFile'])
 
@@ -105,15 +109,15 @@ def statusJsonFilename(name, today):
     statusFile = makeFilesafeString(statusFile)
     return "{dir}/{statusFile}".format(dir=dir, statusFile=statusFile)
 
-def makeStatusAsObj(name, today, status):
-    return {KEY_NAME: name, KEY_TODAY: today, KEY_STATUS:status}
+def makeStatusAsObj(name, today, status, loc):
+    return {KEY_NAME: name, KEY_TODAY: today, KEY_STATUS:status, KEY_LOC: loc}
 
-def updateStatus(name, today, status):
+def updateStatus(name, today, status, loc):
     dir = statusDirname(today)
     pathlib.Path(dir).mkdir(parents=True, exist_ok=True)
     statusFile = statusJsonFilename(name, today)
     with open(statusFile, 'w') as f:
-        f.write(json.dumps(makeStatusAsObj(name, today, status)))
+        f.write(json.dumps(makeStatusAsObj(name, today, status, loc)))
 
 def makeCSV(today):
     dir = statusDirname(today)
@@ -192,7 +196,14 @@ def makeCSV(today):
                     break
     return summary
 
+def checkValidEmailAddr(email):
+    EMAIL_REGEX = re.compile(r"^\S+@\S+\.\S+$")
+    if not EMAIL_REGEX.match(email):
+        raise Exception(f"{email} doesn't look like an email address")
+
 def sendEmail(person, config, htmlMessage):
+    checkValidEmailAddr(config['fromEmail'])
+    checkValidEmailAddr(person['email'])
     msg = MIMEMultipart('alternative')
     msg['Subject'] = "{} Daily Status for {}".format(config['unitname'], todayAsStr())
     msg['From'] = config['fromEmail']
@@ -212,8 +223,33 @@ def sendEmail(person, config, htmlMessage):
     server.sendmail(config['fromEmail'], [ person['email'] ], msg.as_string())
     server.quit()
 
+def sendSimpleEmail(email, config, textMessage, subject):
+        checkValidEmailAddr(config['fromEmail'])
+        checkValidEmailAddr(email)
+        msg = EmailMessage()
+        msg['Subject'] = subject
+        msg['From'] = Address(config['fromEmail'])
+        msg['To'] = Address(email)
+        msg.set_content(textMessage)
+
+    # app specific password to bypass 2-factor auth
+        #pw = "frskrrasfzxzzbrl"
+        server=smtplib.SMTP(config['smtpHost'])
+        #server.set_debuglevel(1)
+        server.ehlo()
+        server.starttls()
+        server.ehlo()
+        server.login(config['fromEmail'],config['smtpPassword'])
+
+        server.sendmail(config['fromEmail'], [ email ], msg.as_string())
+        server.quit()
+
+
 
 def sendSummary(config, summary):
+    checkValidEmailAddr(config['fromEmail'])
+    for e in config['resultsEmail']:
+        checkValidEmailAddr(e)
     summMsg = """
     Summary for {unit} on {today}
 

@@ -82,13 +82,14 @@ def doSubmitOk(environ, start_response):
             if matchesHash(hash, u[KEY_NAME], today, s):
                 name=u[KEY_NAME]
                 status=s
-                updateStatus(name, today, status)
+                updateStatus(name, today, status, u[KEY_LOC])
                 if status == CAMPUS:
                     screeningReminder=config['screeningReminder']
                 data = htmlResponse.format(name=name,
                     today=today,
                     status=status,
                     statuslong=statusLong(status),
+                    loc=loc,
                     screeningReminder=screeningReminder).encode('utf-8')
                 break
         else:
