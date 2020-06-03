@@ -130,6 +130,12 @@ def makeCSV(today):
             if f.endswith(".json") and not f == "summary.json":
                 with open(os.path.join(dirpath, f)) as jsonf:
                     jsonstatus = json.load(jsonf)
+                    if not KEY_LOC in jsonstatus:
+                        for p in config['people']:
+                            if p[KEY_NAME] == jsonstatus[KEY_NAME]:
+                                jsonstatus[KEY_LOC] = p[KEY_LOC]
+                            else:
+                                jsonstatus[KEY_LOC] = "Unknown"
                     allResults.append(jsonstatus)
                     if KEY_STATUS in jsonstatus:
                         totals[jsonstatus[KEY_STATUS]] += 1
@@ -139,6 +145,11 @@ def makeCSV(today):
     for jsonstatus in fixedStatus:
         jsonstatus[KEY_TODAY] = today
         jsonstatus[KEY_FIXED] = True
+
+        if not KEY_LOC in jsonstatus:
+            for p in config['people']:
+                if p[KEY_NAME] == jsonstatus[KEY_NAME]:
+                    jsonstatus[KEY_LOC] = p[KEY_LOC]
         found = False
         for r in allResults:
             if jsonstatus[KEY_NAME] == r[KEY_NAME]:
@@ -171,7 +182,8 @@ def makeCSV(today):
     onCampusNames = []
     for p in allResults:
         if p[KEY_STATUS] == CAMPUS:
-            onCampusNames.append(p[KEY_NAME])
+            print(json.dumps(p))
+            onCampusNames.append(f"{p[KEY_NAME]}, {p[KEY_LOC]}")
 
 
     summary = {KEY_TODAY: today, KEY_TOTALS: totals, 'onCampusNames': onCampusNames, 'allResults': allResults, 'notReporting': didNotReport, 'fixedStatus': fixedStatus}
