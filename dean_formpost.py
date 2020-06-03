@@ -80,5 +80,6 @@ server.sendmail(config['fromEmail'], config['resultsEmail'], msg.as_string())
 server.quit()
 
 sendSummaryToBoss(config, jsonSummary)
+sendNotReporting(config, jsonSummary)
 
 print("{} summary:  {}, out of {}".format(today, jsonSummary['totals'], len(config['people'])))

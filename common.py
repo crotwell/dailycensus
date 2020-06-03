@@ -218,6 +218,8 @@ def checkValidEmailAddr(email):
     EMAIL_REGEX = re.compile(r"^\S+@\S+\.\S+$")
     if not EMAIL_REGEX.match(email):
         raise Exception(f"{email} doesn't look like an email address")
+    a = Address(email)
+
 
 def sendEmail(person, config, htmlMessage):
     checkValidEmailAddr(config['fromEmail'])
@@ -288,6 +290,40 @@ def sendSummaryToBoss(config, jsonSummary):
     {onCampusNames}
     """
     sendSimpleEmail(config['resultsEmail'], config, textMessage, subject)
+
+
+def sendNotReporting(config, jsonSummary):
+    checkValidEmailAddr(config['fromEmail'])
+    for e in config['notreportingEmail']:
+        checkValidEmailAddr(e)
+    onCampusNames="\n    ".join(jsonSummary['onCampusNames'])
+    noReportList = []
+    for n in jsonSummary['notReporting']:
+        noReportList.append(f"{n['name']}, {n['email']}, {n['loc']}")
+    noReportNames="\n    ".join(noReportList)
+
+    tele=jsonSummary[KEY_TOTALS][TELE]
+    leave=jsonSummary[KEY_TOTALS][LEAVE]
+    covid=jsonSummary[KEY_TOTALS][COVID]
+    campus=jsonSummary[KEY_TOTALS][CAMPUS]
+    numpeople=len(config['people'])
+    subject="{} Daily Status Not Reporting for {}".format(config['unitname'], todayAsStr())
+    textMessage = f"""
+    {todayAsStr()}
+    {tele} # Telecommuting Employees
+    {leave} # Employees on Leave
+    {covid} # Employees on covid Leave
+    {campus} # Employees Working On Campus
+    {numpeople} # Total employees in list
+
+    # Employee Names and Locations (Working on Campus)
+    {onCampusNames}
+
+    # Employee Names Not Reporting:
+    {noReportNames}
+    """
+    sendSimpleEmail(config['notreportingEmail'], config, textMessage, subject)
+
 
 def sendSummary(config, summary):
     checkValidEmailAddr(config['fromEmail'])
