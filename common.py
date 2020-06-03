@@ -51,9 +51,15 @@ def loadPeople(config):
             for idx in range(config['peopleFileHeaders']):
                 next(reader)
             for row in reader:
-                config['people'].append({KEY_NAME:row[nameCol], 'email':row[emailCol], KEY_LOC:row[locCol]})
+                personName = reverseName(row[nameCol])
+                config['people'].append({KEY_NAME:personName, 'email':row[emailCol], KEY_LOC:row[locCol]})
     elif config['peopleFile'].endswith('.json'):
         config['people'] = json.load(config['peopleFile'])
+
+def reverseName(name):
+    if "," in name:
+        name = " ".join(name.split(",")[::-1])
+    return name.strip()
 
 def loadFixedStatus(config):
     with open(config['fixedStatusFile']) as f:
@@ -235,13 +241,16 @@ def sendEmail(person, config, htmlMessage):
     server.sendmail(config['fromEmail'], [ person['email'] ], msg.as_string())
     server.quit()
 
-def sendSimpleEmail(email, config, textMessage, subject):
+def sendSimpleEmail(emailToList, config, textMessage, subject):
         checkValidEmailAddr(config['fromEmail'])
-        checkValidEmailAddr(email)
+        toList = []
+        for e in emailToList:
+            checkValidEmailAddr(e)
+            toList.append(Address(e))
         msg = EmailMessage()
         msg['Subject'] = subject
         msg['From'] = Address(config['fromEmail'])
-        msg['To'] = Address(email)
+        msg['To'] = ', '.join(emailToList)
         msg.set_content(textMessage)
 
     # app specific password to bypass 2-factor auth
@@ -253,10 +262,32 @@ def sendSimpleEmail(email, config, textMessage, subject):
         server.ehlo()
         server.login(config['fromEmail'],config['smtpPassword'])
 
-        server.sendmail(config['fromEmail'], [ email ], msg.as_string())
+        server.sendmail(config['fromEmail'], emailToList, msg.as_string())
         server.quit()
 
+def sendSummaryToBoss(config, jsonSummary):
+    checkValidEmailAddr(config['fromEmail'])
+    for e in config['resultsEmail']:
+        checkValidEmailAddr(e)
+    onCampusNames="\n    ".join(jsonSummary['onCampusNames'])
+    tele=jsonSummary[KEY_TOTALS][TELE]
+    leave=jsonSummary[KEY_TOTALS][LEAVE]
+    covid=jsonSummary[KEY_TOTALS][COVID]
+    campus=jsonSummary[KEY_TOTALS][CAMPUS]
+    numpeople=len(config['people'])
+    subject="{} Daily Status Summary for {}".format(config['unitname'], todayAsStr())
+    textMessage = f"""
+    {todayAsStr()}
+    {tele} # Telecommuting Employees
+    {leave} # Employees on Leave
+    {covid} # Employees on covid Leave
+    {campus} # Employees Working On Campus
+    {numpeople} # Total employees in list
 
+    # Employee Names and Locations (Working on Campus)
+    {onCampusNames}
+    """
+    sendSimpleEmail(config['resultsEmail'], config, textMessage, subject)
 
 def sendSummary(config, summary):
     checkValidEmailAddr(config['fromEmail'])

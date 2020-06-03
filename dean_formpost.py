@@ -79,26 +79,6 @@ server.login(config['fromEmail'],config['smtpPassword'])
 server.sendmail(config['fromEmail'], config['resultsEmail'], msg.as_string())
 server.quit()
 
-#kristaEmail='KRUSSELL@sc.edu'
-kristaEmail='crotwell@seis.sc.edu'
-onCampusNames="\n".join(jsonSummary['onCampusNames'])
-tele=jsonSummary[KEY_TOTALS][TELE]
-leave=jsonSummary[KEY_TOTALS][LEAVE]
-covid=jsonSummary[KEY_TOTALS][COVID]
-campus=jsonSummary[KEY_TOTALS][CAMPUS]
-numpeople=len(config['people'])
-subject="{} Daily Status Summary for {}".format(config['unitname'], todayAsStr())
-message = f"""
-{todayAsStr()}
-{tele} # Telecommuting Employees
-{leave} # Employees on Leave
-{covid} # Employees on covid Leave
-{campus} # Employees Working On Campus
-{numpeople} # Total employees in list
-
-# Employee Names and Titles (Working on Campus)
-{onCampusNames}
-"""
-sendSimpleEmail(kristaEmail, config, message, subject)
+sendSummaryToBoss(config, jsonSummary)
 
 print("{} summary:  {}, out of {}".format(today, jsonSummary['totals'], len(config['people'])))
