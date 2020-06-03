@@ -32,12 +32,12 @@ values = {
     "style_version": "3",
     "viewparam": "576689",
     "field90079357": "Earth, Ocean and Environment, School of", # Academic Unit
-    "field90079358" : "", # Other Academic Unit
+    "field90079358" : "Baruch Institute", # Other Academic Unit
     "field90079822" : "Thomas J. Owens",  # Unit Contact
-    "field90079359-first" : "Jae", # Other Unit Contact Name  First Name
-    "field90079359-last" : "Choe", # Other Unit Contact Name  Last Name
+    "field90079359-first" : "Jay", # Other Unit Contact Name  First Name
+    "field90079359-last" : "Pickney", # Other Unit Contact Name  Last Name
     "field90081290" : "owens@seis.sc.edu",  # Contact Email
-    "field90079360" : "jchoe@geol.sc.edu ", # Other Email
+    "field90079360" : "pinckney@sc.edu", # Other Email
     "field90083377": "Chair or Director", # Classification
     "field90080449Format": "MDY", # date-format
     "field90080449M": calendar.month_abbr[now.month], # month, Apr

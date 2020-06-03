@@ -50,7 +50,7 @@ class StoreHandler(BaseHTTPRequestHandler):
         self.wfile.write(response.encode('ascii'))
 
 def run(server_class=HTTPServer, handler_class=StoreHandler):
-    server_address = ('', 8000)
+    server_address = ('', 8888)
     httpd = server_class(server_address, handler_class)
     httpd.serve_forever()
 
