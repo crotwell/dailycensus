@@ -89,7 +89,7 @@ def doSubmitOk(environ, start_response):
                     today=today,
                     status=status,
                     statuslong=statusLong(status),
-                    loc=loc,
+                    loc=u[KEY_LOC],
                     screeningReminder=screeningReminder).encode('utf-8')
                 break
         else:
