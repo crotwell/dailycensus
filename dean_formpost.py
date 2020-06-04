@@ -61,7 +61,7 @@ with open('postformresult.html', 'w') as f:
 msg = MIMEMultipart('alternative')
 msg['Subject'] = "{} Daily Status Posting Result {}".format(config['unitname'], todayAsStr())
 msg['From'] = config['fromEmail']
-msg['To'] = ",".join(config['resultsEmail'])
+msg['To'] = ",".join(config['notreportingEmail'])
 htmlpart = MIMEText(r.content.decode('ascii'), 'html')
 msg.attach(htmlpart)
 jsonpart = MIMEText(json.dumps(jsonSummary, indent=2), 'text/json')
@@ -76,7 +76,7 @@ server.starttls()
 server.ehlo()
 server.login(config['fromEmail'],config['smtpPassword'])
 
-server.sendmail(config['fromEmail'], config['resultsEmail'], msg.as_string())
+server.sendmail(config['fromEmail'], config['notreportingEmail'], msg.as_string())
 server.quit()
 
 sendSummaryToBoss(config, jsonSummary)
