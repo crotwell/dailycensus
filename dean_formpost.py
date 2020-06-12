@@ -33,10 +33,11 @@ values = {
     "viewparam": "576689",
     "field90079357": "Earth, Ocean and Environment, School of", # Academic Unit
     "field90079358" : "Baruch Institute", # Other Academic Unit
-    "field90079822" : "Thomas J. Owens",  # Unit Contact
+    "field90079822-first" : "Subrahmanyam",  # Unit Contact
+    "field90079822-last" : "Bulusu",  # Unit Contact
     "field90079359-first" : "Jay", # Other Unit Contact Name  First Name
     "field90079359-last" : "Pickney", # Other Unit Contact Name  Last Name
-    "field90081290" : "owens@seis.sc.edu",  # Contact Email
+    "field90081290" : "sbulusu@geol.sc.edu",  # Contact Email
     "field90079360" : "pinckney@sc.edu", # Other Email
     "field90083377": "Chair or Director", # Classification
     "field90080449Format": "MDY", # date-format
