@@ -196,9 +196,11 @@ def createSummary(today):
     return summary
 
 def makeCSV(today):
+    statusDir = statusDirname(today)
     summary = createSummary(today)
-    with open("{dir}/summary.json".format(dir=dir), 'w') as f:
+    with open("{dir}/summary.json".format(dir=statusDir), 'w') as f:
         f.write(json.dumps(summary, indent=2))
+    print(summary['totals'])
     with open(config['totalsTemplate'], 'r', newline='') as templatefile:
         with open("{}_{}_{}".format(config['unitname'], today, config['totalsTemplate']), 'w', newline='') as outfile:
             writer = csv.writer(outfile)
@@ -213,6 +215,7 @@ def makeCSV(today):
                     foundHeader = True
                 writer.writerows([row])
                 if foundHeader:
+                    totals = summary[KEY_TOTALS]
                     row = [config['unitname'], totals[TELE], totals[LEAVE], totals[CAMPUS], totals[UNKNOWN]]
                     writer.writerows([row, ["", 'COVID', totals[COVID]]])
                     break
