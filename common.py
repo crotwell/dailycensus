@@ -125,7 +125,7 @@ def updateStatus(name, today, status, loc):
     with open(statusFile, 'w') as f:
         f.write(json.dumps(makeStatusAsObj(name, today, status, loc)))
 
-def makeCSV(today):
+def createSummary(today):
     dir = statusDirname(today)
     pathlib.Path(dir).mkdir(parents=True, exist_ok=True)
     allResults = []
@@ -193,6 +193,10 @@ def makeCSV(today):
 
 
     summary = {KEY_TODAY: today, KEY_TOTALS: totals, 'onCampusNames': onCampusNames, 'allResults': allResults, 'notReporting': didNotReport, 'fixedStatus': fixedStatus}
+    return summary
+
+def makeCSV(today):
+    summary = createSummary(today)
     with open("{dir}/summary.json".format(dir=dir), 'w') as f:
         f.write(json.dumps(summary, indent=2))
     with open(config['totalsTemplate'], 'r', newline='') as templatefile:
