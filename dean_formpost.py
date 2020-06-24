@@ -10,11 +10,12 @@ now = datetime.datetime.now()
 
 loadPeople(config)
 today=todayAsStr()
-jsonSummary = makeCSV(today)
+jsonSummary = createSummary(today)
 
-with open("{}_{}_{}".format(config['unitname'], today, config['totalsTemplate']), 'r') as infile:
-    summary = infile.read()
-#sendSummary(config, summary)
+
+statusDir = statusDirname(today)
+with open("{dir}/summary.json".format(dir=statusDir), 'w') as f:
+    f.write(json.dumps(jsonSummary, indent=2))
 
 # "<form method=\"post\" accept-charset=\"UTF-8\" novalidate enctype=\"multipart/form-data\" action=\"
 # https://universityofsouthcarolina-yrckc.formstack.com/forms/index.php
