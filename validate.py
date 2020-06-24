@@ -13,4 +13,8 @@ today=todayAsStr()
 fixedStatus = loadFixedStatus(config)
 jsonSummary = createSummary(today)
 
+print(json.dumps(jsonSummary))
+print()
+print("{} summary:  {}, out of {}".format(today, jsonSummary['totals'], len(config['people'])))
+
 print("seems ok...")

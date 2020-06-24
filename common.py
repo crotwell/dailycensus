@@ -188,7 +188,6 @@ def createSummary(today):
     onCampusNames = []
     for p in allResults:
         if p[KEY_STATUS] == CAMPUS:
-            print(json.dumps(p))
             onCampusNames.append(f"{p[KEY_NAME]}, {p[KEY_LOC]}")
 
 

@@ -6,10 +6,12 @@ testing=True
 
 loadPeople(config)
 today=todayAsStr()
-jsonSummary = makeCSV(today)
+jsonSummary = createSummary(today)
 
-with open("{}_{}_{}".format(config['unitname'], today, config['totalsTemplate']), 'r') as infile:
-    summary = infile.read()
-sendSummary(config, summary)
+statusDir = statusDirname(today)
+with open("{dir}/summary.json".format(dir=statusDir), 'w') as f:
+    f.write(json.dumps(jsonSummary, indent=2))
+
+
 
 print("{} summary:  {}, out of {}".format(today, jsonSummary['totals'], len(config['people'])))
