@@ -32,6 +32,7 @@ values = {
     "style_version": "3",
     "viewparam": "576689",
     "field90079357": "Earth, Ocean and Environment, School of", # Academic Unit
+    "field94515295": "EWS, School of Earth, Ocean and Environment",
     "field90079358" : "Baruch Institute", # Other Academic Unit
     "field90079822-first" : "Subrahmanyam",  # Unit Contact
     "field90079822-last" : "Bulusu",  # Unit Contact
@@ -47,8 +48,11 @@ values = {
     "field90080322": "{}".format(jsonSummary[KEY_TOTALS][TELE]), # Telecommuting Employees
     "field90588767": "{}".format(jsonSummary[KEY_TOTALS][LEAVE]), # Employees on Leave
     "field90080319": "{}".format(jsonSummary[KEY_TOTALS][COVID]), # Employees on covid Leave
+    "field94514744": "{}".format(jsonSummary[KEY_TOTALS][CAMPUS]),
     "field90080317": "{}".format(jsonSummary[KEY_TOTALS][CAMPUS]), # Employees Working On Campus
     "field90388556": "\n".join(jsonSummary['onCampusNames']), # Employee Names and Titles (Working on Campus)
+    "field94514210": "\n".join(jsonSummary['onCampusNames']), # Employee Names and Titles (Working on Campus)
+    "field94517611": "No",
    }
 
 #url = "https://universityofsouthcarolina-yrckc.formstack.com/forms/index.php"
