@@ -63,8 +63,11 @@ def reverseName(name):
 
 def loadFixedStatus(config):
     with open(config['fixedStatusFile']) as f:
-        return json.load(f)
-
+        fixed = json.load(f)
+        for f in fixed:
+            f['name'] = reverseName(f['name'])
+        return fixed
+        
 def statusLong(status):
     if status == TELE:
         return "working from home"
