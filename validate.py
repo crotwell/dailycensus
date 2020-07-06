@@ -16,6 +16,7 @@ jsonSummary = createSummary(today)
 print(json.dumps(jsonSummary, indent=2))
 print()
 
+allFound = True
 for f in fixedStatus:
     found = False
     for p in config['people']:
@@ -23,8 +24,10 @@ for f in fixedStatus:
             found = True
             break
     if not found:
+        allFound = False
         print(f'Unable to find {f["name"]} from fixedStatus')
-
+if allFound:
+    print(f"Found all {len(fixedStatus)} fixedStatus in people")
 
 print("{} summary:  {}, out of {}".format(today, jsonSummary['totals'], len(config['people'])))
 
