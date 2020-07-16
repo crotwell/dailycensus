@@ -1,9 +1,34 @@
 from common import *
 import datetime
+import time
 
 import os
 import requests
 from pprint import pprint
+
+
+def sendPostingResult(config, jsonSummary, r):
+    # send output of form submit
+    msg = MIMEMultipart('alternative')
+    msg['Subject'] = "{} Daily Status Posting Result {}".format(config['unitname'], todayAsStr())
+    msg['From'] = config['fromEmail']
+    msg['To'] = ",".join(config['notreportingEmail'])
+    htmlpart = MIMEText(r.content.decode('ascii'), 'html')
+    msg.attach(htmlpart)
+    jsonpart = MIMEText(json.dumps(jsonSummary, indent=2), 'text/json')
+    msg.attach(jsonpart)
+
+    # app specific password to bypass 2-factor auth
+    #pw = "frskrrasfzxzzbrl"
+    server=smtplib.SMTP(config['smtpHost'])
+    #server.set_debuglevel(1)
+    server.ehlo()
+    server.starttls()
+    server.ehlo()
+    server.login(config['fromEmail'],config['smtpPassword'])
+
+    server.sendmail(config['fromEmail'], config['notreportingEmail'], msg.as_string())
+    server.quit()
 
 testing=True
 now = datetime.datetime.now()
@@ -63,29 +88,27 @@ with open('postformresult.html', 'w') as f:
     f.write("Status Code: {}".format(r.status_code))
     f.write(r.content.decode('ascii'))
 
-# send output of form submit
-msg = MIMEMultipart('alternative')
-msg['Subject'] = "{} Daily Status Posting Result {}".format(config['unitname'], todayAsStr())
-msg['From'] = config['fromEmail']
-msg['To'] = ",".join(config['notreportingEmail'])
-htmlpart = MIMEText(r.content.decode('ascii'), 'html')
-msg.attach(htmlpart)
-jsonpart = MIMEText(json.dumps(jsonSummary, indent=2), 'text/json')
-msg.attach(jsonpart)
+try:
+    sendPostingResult(config, jsonSummary, r)
+except Exception:
+    # try again
+    logging.exception("Exception trying to sendPostingResult")
+    time.sleep(3)
+    sendPostingResult(config, jsonSummary, r)
 
-# app specific password to bypass 2-factor auth
-#pw = "frskrrasfzxzzbrl"
-server=smtplib.SMTP(config['smtpHost'])
-#server.set_debuglevel(1)
-server.ehlo()
-server.starttls()
-server.ehlo()
-server.login(config['fromEmail'],config['smtpPassword'])
-
-server.sendmail(config['fromEmail'], config['notreportingEmail'], msg.as_string())
-server.quit()
-
-sendSummaryToBoss(config, jsonSummary)
-sendNotReporting(config, jsonSummary)
+try:
+    sendSummaryToBoss(config, jsonSummary)
+except Exception:
+    # try again
+    logging.exception("Exception trying to sendSummaryToBoss, retry...")
+    time.sleep(3)
+    sendSummaryToBoss(config, jsonSummary)
+try:
+    sendNotReporting(config, jsonSummary)
+except Exception:
+    # try again???
+    logging.exception("Exception trying to sendNotReporting, retry...")
+    time.sleep(3)
+    sendNotReporting(config, jsonSummary)
 
 print("{} summary:  {}, out of {}".format(today, jsonSummary['totals'], len(config['people'])))
