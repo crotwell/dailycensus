@@ -43,6 +43,6 @@ if allFound:
 print("{} summary:  {}, out of {}".format(today, jsonSummary['totals'], len(config['people'])))
 
 if allIsOk:
-    print("seems ok...")
+    print("seems ok...remember to restart gunicorn if needed")
 else:
     print("Looks like there are problems!")
