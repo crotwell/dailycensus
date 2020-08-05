@@ -67,7 +67,7 @@ def loadFixedStatus(config):
         for f in fixed:
             f['name'] = reverseName(f['name'])
         return fixed
-        
+
 def statusLong(status):
     if status == TELE:
         return "working from home"
@@ -291,6 +291,7 @@ def sendNotReporting(config, jsonSummary):
     covid=jsonSummary[KEY_TOTALS][COVID]
     campus=jsonSummary[KEY_TOTALS][CAMPUS]
     numpeople=len(config['people'])
+    numNoReport=len(noReportList)
     subject="{} Daily Status Not Reporting for {}".format(config['unitname'], todayAsStr())
     textMessage = f"""
     {todayAsStr()}
@@ -298,6 +299,7 @@ def sendNotReporting(config, jsonSummary):
     {leave} # Employees on Leave
     {covid} # Employees on covid Leave
     {campus} # Employees Working On Campus
+    {numNoReport} # Employees Not Reporting
     {numpeople} # Total employees in list
 
     # Employee Names and Locations (Working on Campus)
