@@ -18,14 +18,16 @@ theday = now
 missedReport = {}
 for p in config['people']:
     p['missedReport'] = 0
-for d in range(0,5):
-    dayStr=theday.date().isoformat()
-    summary = createSummary(dayStr)
-    for mrp in summary['notReporting']:
-        for p in config['people']:
-            if p['name'] == mrp['name']:
-                p['missedReport'] += 1
-                break
+for d in range(0,7):
+    if theday.weekday() < 5:
+        # Sat=5 Sun=6
+        dayStr=theday.date().isoformat()
+        summary = createSummary(dayStr)
+        for mrp in summary['notReporting']:
+            for p in config['people']:
+                if p['name'] == mrp['name']:
+                    p['missedReport'] += 1
+                    break
     theday=theday - oneday
 
 
