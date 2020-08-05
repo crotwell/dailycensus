@@ -30,6 +30,7 @@ for d in range(0,7):
                     break
     theday=theday - oneday
 
-
-for p in config['people']:
-    print(f"Missed: {p['name']} {p['missedReport']}")
+sortedPeople = sorted(config['people'], key=lambda p: p['missedReport'])
+for p in sortedPeople:
+    if p['missedReport'] > 0:
+        print(f"Missed: {p['name']} {p['missedReport']}")
