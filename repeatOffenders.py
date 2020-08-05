@@ -12,7 +12,8 @@ today=todayAsStr()
 fixedStatus = loadFixedStatus(config)
 
 oneday = datetime.timedelta(days=1)
-
+numdays = 0
+maxMiss = 3
 now = datetime.datetime.now().replace(microsecond=0)
 theday = now
 missedReport = {}
@@ -21,6 +22,7 @@ for p in config['people']:
 for d in range(0,7):
     if theday.weekday() < 5:
         # Sat=5 Sun=6
+        numdays += 1
         dayStr=theday.date().isoformat()
         summary = createSummary(dayStr)
         for mrp in summary['notReporting']:
@@ -31,6 +33,13 @@ for d in range(0,7):
     theday=theday - oneday
 
 sortedPeople = sorted(config['people'], key=lambda p: p['missedReport'])
+print(f'SEOE Missed more than {maxMiss} reports in last {numdays}')
 for p in sortedPeople:
-    if p['missedReport'] > 0:
-        print(f"Missed: {p['name']} {p['missedReport']}")
+    if p['missedReport'] > maxMiss and p['loc'] == 'SEOE':
+        print(f"Missed:  {p['missedReport']} {p['name']} {p['email']}")
+
+print("")
+print(f'Baruch Missed more than {maxMiss} reports in last {numdays} workdays')
+for p in sortedPeople:
+    if p['missedReport'] > maxMiss and p['loc'] != 'SEOE':
+        print(f"Missed:  {p['missedReport']} {p['name']} {p['email']} {p['loc']}")
