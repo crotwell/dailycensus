@@ -13,7 +13,7 @@ fixedStatus = loadFixedStatus(config)
 
 oneday = datetime.timedelta(days=1)
 numdays = 0
-maxMiss = 3
+maxMiss = 2
 now = datetime.datetime.now().replace(microsecond=0)
 theday = now
 missedReport = {}
