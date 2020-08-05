@@ -36,10 +36,10 @@ sortedPeople = sorted(config['people'], key=lambda p: p['missedReport'])
 print(f'SEOE Missed more than {maxMiss} reports in last {numdays}')
 for p in sortedPeople:
     if p['missedReport'] > maxMiss and p['loc'] == 'SEOE':
-        print(f"Missed:  {p['missedReport']} {p['name']} {p['email']}")
+        print(f"Missed:  {p['missedReport']}/{numdays} {p['name']} {p['email']} {p['loc']}")
 
 print("")
 print(f'Baruch Missed more than {maxMiss} reports in last {numdays} workdays')
 for p in sortedPeople:
     if p['missedReport'] > maxMiss and p['loc'] != 'SEOE':
-        print(f"Missed:  {p['missedReport']} {p['name']} {p['email']} {p['loc']}")
+        print(f"Missed:  {p['missedReport']}/{numdays} {p['name']} {p['email']} {p['loc']}")
