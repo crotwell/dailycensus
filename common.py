@@ -67,6 +67,7 @@ def loadScreeningReminder(config):
         with open(config['screeningReminderFile'], 'r') as f:
             htmlMsg = f.read()
             config['screeningReminder'] = htmlMsg
+            return htmlMsg
     except:
         print("Unexpected error:", sys.exc_info()[0])
         raise
