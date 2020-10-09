@@ -62,7 +62,7 @@ def reverseName(name):
     return name.strip()
 
 def loadScreeningReminder(config):
-    htmlMsg=config['screeningReminder']
+    htmlMsg=""
     try:
         with open(config['screeningReminderFile'], 'r') as f:
             htmlMsg = f.read()
