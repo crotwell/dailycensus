@@ -61,6 +61,16 @@ def reverseName(name):
         name = " ".join(name.split(",")[::-1])
     return name.strip()
 
+def loadScreeningReminder(config):
+    htmlMsg=config['screeningReminder']
+    try:
+        with open(config['screeningReminderFile'], 'r') as f:
+            htmlMsg = f.read()
+            config['screeningReminder'] = htmlMsg
+    except:
+        print("Unexpected error:", sys.exc_info()[0])
+        raise
+
 def loadFixedStatus(config):
     with open(config['fixedStatusFile']) as f:
         fixed = json.load(f)

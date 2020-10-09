@@ -84,7 +84,8 @@ def doSubmitOk(environ, start_response):
                 status=s
                 updateStatus(name, today, status, u[KEY_LOC])
                 if status == CAMPUS:
-                    screeningReminder=config['screeningReminder']
+                    loadScreeningReminder()
+                    screeningReminder=loadScreeningReminder()
                 data = htmlResponse.format(name=name,
                     today=today,
                     status=status,
