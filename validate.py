@@ -18,7 +18,17 @@ print()
 
 allIsOk = True
 
+# check known work locations
+knownLocs = [ 'SEOE', 'Baruch - Coast', 'Baruch - Campus']
+
+today=todayAsStr()
+fixedStatus = loadFixedStatus(config)
+jsonSummary = createSummary(today)
+
 for p in config['people']:
+    if not p[KEY_LOC] in knownLocs:
+        allIsOk = False
+        print(f"Unknown loc for {json.dumps(p)}")
     try:
         checkValidEmailAddr(p['email'])
     except:
@@ -45,4 +55,4 @@ print("{} summary:  {}, out of {}".format(today, jsonSummary['totals'], len(conf
 if allIsOk:
     print("seems ok...remember to restart gunicorn if needed")
 else:
-    print("Looks like there are problems!")
+    print("\n\nLooks like there are problems!")
