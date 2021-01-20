@@ -313,11 +313,11 @@ def sendNotReporting(config, jsonSummary):
     {numNoReport} # Employees Not Reporting
     {numpeople} # Total employees in list
 
-    # Employee Names and Locations (Working on Campus)
-    {onCampusNames}
-
     # Employee Names Not Reporting:
     {noReportNames}
+
+    # Successful Reporting Employee Names and Locations (Working on Campus)
+    {onCampusNames}
     """
     sendSimpleEmail(config['notreportingEmail'], config, textMessage, subject)
 
