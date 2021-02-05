@@ -4,6 +4,7 @@ import datetime
 import os
 import requests
 from pprint import pprint
+from email.headerregistry import Address
 
 testing=True
 now = datetime.datetime.now()
@@ -51,6 +52,26 @@ if allFound:
     print(f"Found all {len(fixedStatus)} fixedStatus in people")
 
 print("{} summary:  {}, out of {}".format(today, jsonSummary['totals'], len(config['people'])))
+
+knownServers = []
+for person in config['people']:
+    a = Address(addr_spec=person['email'])
+    knownServers.append(a.domain)
+knownServers = set(knownServers)
+serverResults = {}
+for k in knownServers:
+    serverResults[k] = 0
+for r in jsonSummary['allResults']:
+    for p in config['people']:
+        if r[KEY_NAME] == p[KEY_NAME]:
+            a = Address(addr_spec=p['email'])
+            serverResults[a.domain]+=1
+            break
+print()
+print("Successful by email server:")
+for k,v in serverResults.items():
+    print("{} from {}".format(v, k))
+print()
 
 if allIsOk:
     print("seems ok...remember to restart gunicorn if needed")
