@@ -213,7 +213,7 @@ def checkValidEmailAddr(email):
     EMAIL_REGEX = re.compile(r"^\S+@\S+\.\S+$")
     if not EMAIL_REGEX.match(email):
         raise Exception(f"{email} doesn't look like an email address")
-    a = Address(email)
+    a = Address(addr_spec=email)
 
 
 def sendEmail(person, config, htmlMessage):
@@ -243,10 +243,10 @@ def sendSimpleEmail(emailToList, config, textMessage, subject):
         toList = []
         for e in emailToList:
             checkValidEmailAddr(e)
-            toList.append(Address(e))
+            toList.append(Address(addr_spec=e))
         msg = EmailMessage()
         msg['Subject'] = subject
-        msg['From'] = Address(config['fromEmail'])
+        msg['From'] = Address(addr_spec=config['fromEmail'])
         msg['To'] = ', '.join(emailToList)
         msg.set_content(textMessage)
 
