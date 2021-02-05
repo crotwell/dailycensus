@@ -59,18 +59,24 @@ for person in config['people']:
     knownServers.append(a.domain)
 knownServers = set(knownServers)
 serverResults = {}
+serverTotals = {}
 for k in knownServers:
     serverResults[k] = 0
+    serverTotals[k] = 0
 for r in jsonSummary['allResults']:
     for p in config['people']:
         if r[KEY_NAME] == p[KEY_NAME]:
             a = Address(addr_spec=p['email'])
             serverResults[a.domain]+=1
             break
+for p in config['people']:
+    a = Address(addr_spec=p['email'])
+    serverTotals[a.domain]+=1
+
 print()
 print("Successful by email server:")
 for k,v in serverResults.items():
-    print("{} from {}".format(v, k))
+    print("{}/{} from {}".format(v, serverTotals[k], k))
 print()
 
 if allIsOk:
