@@ -16,6 +16,8 @@ from email.mime.text import MIMEText
 from email.message import EmailMessage
 from email.headerregistry import Address
 
+MEDTELE = "medtele"
+QUARTELE= "quartele"
 TELE = "telecommute"
 LEAVE = "leave"
 COVID = "covidleave"
@@ -23,7 +25,7 @@ CAMPUS = "campus"
 UNKNOWN="unknown"
 ALL="all"
 
-STATUS_LIST = [ TELE, LEAVE, COVID, CAMPUS, UNKNOWN]
+STATUS_LIST = [ MEDTELE, QUARTELE, TELE, LEAVE, COVID, CAMPUS, UNKNOWN]
 
 KEY_NAME= 'name'
 KEY_LOC= 'loc'
@@ -80,8 +82,12 @@ def loadFixedStatus(config):
         return fixed
 
 def statusLong(status):
-    if status == TELE:
-        return "working from home"
+    if status == MEDTELE:
+        return "working from home due to medical condition/dependent care"
+    elif status == QUARTELE:
+        return "working from home due to isolation/quarantine"
+    elif status == TELE:
+        return "working from home for other reasons"
     elif status == LEAVE:
         return "taking some leave"
     elif status == COVID:
@@ -143,7 +149,7 @@ def createSummary(today):
     dir = statusDirname(today)
     pathlib.Path(dir).mkdir(parents=True, exist_ok=True)
     allResults = []
-    totals = {TELE: 0, LEAVE: 0, COVID: 0, CAMPUS: 0, UNKNOWN: 0, ALL: len(config['people'])}
+    totals = {MEDTELE: 0, QUARTELE: 0, TELE: 0, LEAVE: 0, COVID: 0, CAMPUS: 0, UNKNOWN: 0, ALL: len(config['people'])}
     fixedStatus = loadFixedStatus(config)
     for dirpath, dnames, fnames in os.walk(statusDirname(today)):
         for f in fnames:
@@ -185,8 +191,8 @@ def createSummary(today):
                 print("error fixed status for {}".format(jsonstatus))
     totals[ALL] = totalNum
 
-    if totals[TELE] +  totals[LEAVE] +  totals[COVID] +  totals[CAMPUS] < totalNum:
-        totals[UNKNOWN] = totalNum - (totals[TELE] +  totals[LEAVE]  +  totals[COVID] +  totals[CAMPUS])
+    if totals[MEDTELE] +  totals[QUARTELE] +  totals[TELE] +  totals[LEAVE] +  totals[COVID] +  totals[CAMPUS] < totalNum:
+        totals[UNKNOWN] = totalNum - (totals[MEDTELE] +  totals[QUARTELE] + totals[TELE] +  totals[LEAVE]  +  totals[COVID] +  totals[CAMPUS])
 
     didNotReport = []
     for p in config['people']:
@@ -267,6 +273,8 @@ def sendSummaryToBoss(config, jsonSummary):
     for e in config['resultsEmail']:
         checkValidEmailAddr(e)
     onCampusNames="\n    ".join(jsonSummary['onCampusNames'])
+    medtele=jsonSummary[KEY_TOTALS][MEDTELE]
+    quartele=jsonSummary[KEY_TOTALS][QUARTELE]
     tele=jsonSummary[KEY_TOTALS][TELE]
     leave=jsonSummary[KEY_TOTALS][LEAVE]
     covid=jsonSummary[KEY_TOTALS][COVID]
@@ -275,7 +283,9 @@ def sendSummaryToBoss(config, jsonSummary):
     subject="{} Daily Status Summary for {}".format(config['unitname'], todayAsStr())
     textMessage = f"""
     {todayAsStr()}
-    {tele} # Telecommuting Employees
+    {medtele} # Medical/Dependent Care Telecommuting Employees
+    {quartele} # Quarantine Telecommuting Employees
+    {tele} # Other Telecommuting Employees
     {leave} # Employees on Leave
     {covid} # Employees on covid Leave
     {campus} # Employees Working On Campus
@@ -297,6 +307,8 @@ def sendNotReporting(config, jsonSummary):
         noReportList.append(f"{n['name']}, {n['email']}, {n['loc']}")
     noReportNames="\n    ".join(noReportList)
 
+    medtele=jsonSummary[KEY_TOTALS][MEDTELE]
+    quartele=jsonSummary[KEY_TOTALS][QUARTELE]
     tele=jsonSummary[KEY_TOTALS][TELE]
     leave=jsonSummary[KEY_TOTALS][LEAVE]
     covid=jsonSummary[KEY_TOTALS][COVID]
@@ -306,7 +318,9 @@ def sendNotReporting(config, jsonSummary):
     subject="{} Daily Status Not Reporting for {}".format(config['unitname'], todayAsStr())
     textMessage = f"""
     {todayAsStr()}
-    {tele} # Telecommuting Employees
+    {medtele} # Medical/Dependent Care Telecommuting Employees
+    {quartele} # Quarantine Telecommuting Employees
+    {tele} # Other Telecommuting Employees
     {leave} # Employees on Leave
     {covid} # Employees on covid Leave
     {campus} # Employees Working On Campus

@@ -20,7 +20,9 @@ defaultMsg="""
       <h1>DEFAULT TEMPLATE</h1>
     <h3>Please report your work status for today {today}.</h3>
     <ul>
-      <li><a href="{baseurl}{tele}">Telecommuting</a></li>
+      <li><a href="{baseurl}{medtele}">Working remotely due to medical condition/dependent care</a></li>
+      <li><a href="{baseurl}{quartele}">Working remotely due to isolation/quarantine</a></li>
+      <li><a href="{baseurl}{tele}">Telecommuting: Other reason ((for situations unrelated to Covid-19; Faculty working remotely)</a></li>
       <li><a href="{baseurl}{leave}">On Leave</a></li>
       <li><a href="{baseurl}{campus}">Physically Reporting to Work</a></li>
     </ul>
@@ -60,6 +62,8 @@ for person in config['people']:
         todayname=todayName(),
         today=today,
         baseurl=baseurl,
+        medtele=makeHash(person[KEY_NAME], today, MEDTELE),
+        quartele=makeHash(person[KEY_NAME], today, QUARTELE),
         tele=makeHash(person[KEY_NAME], today, TELE),
         campus=makeHash(person[KEY_NAME], today, CAMPUS),
         covid=makeHash(person[KEY_NAME], today, COVID),
