@@ -62,6 +62,7 @@ for person in config['people']:
         todayname=todayName(),
         today=today,
         baseurl=baseurl,
+        ninemo=makeHash(person[KEY_NAME], today, NINEMO),
         medtele=makeHash(person[KEY_NAME], today, MEDTELE),
         quartele=makeHash(person[KEY_NAME], today, QUARTELE),
         tele=makeHash(person[KEY_NAME], today, TELE),
