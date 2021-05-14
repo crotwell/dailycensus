@@ -16,6 +16,7 @@ from email.mime.text import MIMEText
 from email.message import EmailMessage
 from email.headerregistry import Address
 
+NINEMO = "ninemo"
 MEDTELE = "medtele"
 QUARTELE= "quartele"
 TELE = "telecommute"
@@ -25,7 +26,7 @@ CAMPUS = "campus"
 UNKNOWN="unknown"
 ALL="all"
 
-STATUS_LIST = [ MEDTELE, QUARTELE, TELE, LEAVE, COVID, CAMPUS, UNKNOWN]
+STATUS_LIST = [ NINEMO, MEDTELE, QUARTELE, TELE, LEAVE, COVID, CAMPUS, UNKNOWN]
 
 KEY_NAME= 'name'
 KEY_LOC= 'loc'
@@ -82,7 +83,9 @@ def loadFixedStatus(config):
         return fixed
 
 def statusLong(status):
-    if status == MEDTELE:
+    if status == NINEMO:
+        return "not working for the university today (faculty on a 9-mo appointment) "
+    elif status == MEDTELE:
         return "working from home due to medical condition/dependent care"
     elif status == QUARTELE:
         return "working from home due to isolation/quarantine"
@@ -149,7 +152,7 @@ def createSummary(today):
     dir = statusDirname(today)
     pathlib.Path(dir).mkdir(parents=True, exist_ok=True)
     allResults = []
-    totals = {MEDTELE: 0, QUARTELE: 0, TELE: 0, LEAVE: 0, COVID: 0, CAMPUS: 0, UNKNOWN: 0, ALL: len(config['people'])}
+    totals = {NINEMO: 0, MEDTELE: 0, QUARTELE: 0, TELE: 0, LEAVE: 0, COVID: 0, CAMPUS: 0, UNKNOWN: 0, ALL: len(config['people'])}
     fixedStatus = loadFixedStatus(config)
     for dirpath, dnames, fnames in os.walk(statusDirname(today)):
         for f in fnames:
@@ -191,8 +194,8 @@ def createSummary(today):
                 print("error fixed status for {}".format(jsonstatus))
     totals[ALL] = totalNum
 
-    if totals[MEDTELE] +  totals[QUARTELE] +  totals[TELE] +  totals[LEAVE] +  totals[COVID] +  totals[CAMPUS] < totalNum:
-        totals[UNKNOWN] = totalNum - (totals[MEDTELE] +  totals[QUARTELE] + totals[TELE] +  totals[LEAVE]  +  totals[COVID] +  totals[CAMPUS])
+    if totals[NINEMO] + totals[MEDTELE] + totals[QUARTELE] +  totals[TELE] +  totals[LEAVE] +  totals[COVID] +  totals[CAMPUS] < totalNum:
+        totals[UNKNOWN] = totalNum - (totals[NINEMO] + totals[MEDTELE] +  totals[QUARTELE] + totals[TELE] +  totals[LEAVE]  +  totals[COVID] +  totals[CAMPUS])
 
     didNotReport = []
     for p in config['people']:
@@ -273,6 +276,7 @@ def sendSummaryToBoss(config, jsonSummary):
     for e in config['resultsEmail']:
         checkValidEmailAddr(e)
     onCampusNames="\n    ".join(jsonSummary['onCampusNames'])
+    ninemo=jsonSummary[KEY_TOTALS][NINEMO]
     medtele=jsonSummary[KEY_TOTALS][MEDTELE]
     quartele=jsonSummary[KEY_TOTALS][QUARTELE]
     tele=jsonSummary[KEY_TOTALS][TELE]
@@ -283,6 +287,7 @@ def sendSummaryToBoss(config, jsonSummary):
     subject="{} Daily Status Summary for {}".format(config['unitname'], todayAsStr())
     textMessage = f"""
     {todayAsStr()}
+    {ninemo} # Faculty Not Working, Nine Month
     {medtele} # Medical/Dependent Care Telecommuting Employees
     {quartele} # Quarantine Telecommuting Employees
     {tele} # Other Telecommuting Employees
@@ -307,6 +312,7 @@ def sendNotReporting(config, jsonSummary):
         noReportList.append(f"{n['name']}, {n['email']}, {n['loc']}")
     noReportNames="\n    ".join(noReportList)
 
+    ninemo=jsonSummary[KEY_TOTALS][NINEMO]
     medtele=jsonSummary[KEY_TOTALS][MEDTELE]
     quartele=jsonSummary[KEY_TOTALS][QUARTELE]
     tele=jsonSummary[KEY_TOTALS][TELE]
@@ -318,6 +324,7 @@ def sendNotReporting(config, jsonSummary):
     subject="{} Daily Status Not Reporting for {}".format(config['unitname'], todayAsStr())
     textMessage = f"""
     {todayAsStr()}
+    {ninemo} # Faculty Not Working, Nine Month
     {medtele} # Medical/Dependent Care Telecommuting Employees
     {quartele} # Quarantine Telecommuting Employees
     {tele} # Other Telecommuting Employees
